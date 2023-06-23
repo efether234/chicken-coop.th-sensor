@@ -1,18 +1,27 @@
 #include <Arduino.h>
+#include <DHT.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#define DHTPIN 5 // D1
+#define DHTTYPE DHT21
+DHT dht(DHTPIN, DHTTYPE);
+
+float hum;
+float temp;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+  dht.begin();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
+  hum = dht.readHumidity();
+  temp = dht.readTemperature(true);
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  Serial.print("Humidity: ");
+  Serial.print(hum);
+  Serial.print("% Temperature: ");
+  Serial.print(temp);
+  Serial.println(" degrees celsius");
+
+  delay(1000);
 }

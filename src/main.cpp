@@ -51,19 +51,33 @@ void setup() {
   Serial.print("Local IP: ");
   Serial.println(WiFi.localIP());
 
+  client.setServer(broker, port);
+  
 
   dht.begin();
 }
 
 void loop() {
+  if (!client.connected())
+  {
+    delay(5000);
+    if (client.connect("coop-th", SECRET_UN, SECRET_PW, availTopic, 0, true, "unavailable"))
+    {
+      Serial.println("Connected to MQTT broker.");
+      client.publish(availTopic, "available");
+    }
+  }
   hum = dht.readHumidity();
   temp = dht.readTemperature(true);
 
-  Serial.print("Humidity: ");
-  Serial.print(hum);
-  Serial.print("% Temperature: ");
-  Serial.print(temp);
-  Serial.println(" degrees celsius");
+  const size_t bufferSize = 8;
+  char hBuffer[bufferSize];
+  char tBuffer[bufferSize];
+  dtostrf(hum, bufferSize - 1, 2, hBuffer);
+  dtostrf(temp, bufferSize - 1, 2, tBuffer);
+
+  client.publish(humTopic, hBuffer);
+  client.publish(tempTopic, tBuffer);
 
   delay(1000);
 }

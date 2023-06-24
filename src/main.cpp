@@ -64,17 +64,17 @@ void loop() {
     if (client.connect("coop-th", SECRET_UN, SECRET_PW, availTopic, 0, true, "unavailable"))
     {
       Serial.println("Connected to MQTT broker.");
-      client.publish(availTopic, "available");
+      client.publish(availTopic, "available", true);
     }
   }
   hum = dht.readHumidity();
   temp = dht.readTemperature(true);
 
-  const size_t bufferSize = 8;
+  const size_t bufferSize = 7;
   char hBuffer[bufferSize];
   char tBuffer[bufferSize];
-  dtostrf(hum, bufferSize - 1, 2, hBuffer);
-  dtostrf(temp, bufferSize - 1, 2, tBuffer);
+  dtostrf(hum, bufferSize - 1, 1, hBuffer);
+  dtostrf(temp, bufferSize - 1, 1, tBuffer);
 
   client.publish(humTopic, hBuffer);
   client.publish(tempTopic, tBuffer);
